@@ -47,14 +47,14 @@ jobs:
         projectPath:
           - test-project
         unityVersion:
-          - 2021.3.32f1
-          - 2022.3.13f1
-          - 2023.1.19f1
+          #- 2021.3.32f1
+          #- 2022.3.13f1
+          - 2023.1.20f1
         targetPlatform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit) with mono backend.
+          #- StandaloneOSX # Build a macOS standalone (Intel 64-bit) with mono backend.
           - StandaloneWindows64 # Build a Windows 64-bit standalone with mono backend.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone with mono backend.
-          - iOS # Build an iOS player.
+          #- StandaloneLinux64 # Build a Linux 64-bit standalone with mono backend.
+          #- iOS # Build an iOS player.
           - Android # Build an Android .apk.
           - WebGL # WebGL.
     steps:
@@ -80,7 +80,7 @@ jobs:
       #          Build          #
       ###########################
       - name: Build
-        uses: ./
+        uses: game-ci/unity-builder@v4
         id: build-1
         continue-on-error: true
         env:
@@ -99,7 +99,7 @@ jobs:
           sleep 60
 
       - name: Build (Retry 1)
-        uses: ./
+        uses: game-ci/unity-builder@v4
         id: build-2
         if: ${{ steps.build-1.outcome == 'failure' }}
         continue-on-error: true
@@ -120,7 +120,7 @@ jobs:
           sleep 240
 
       - name: Build (Retry 2)
-        uses: ./
+        uses: game-ci/unity-builder@v4
         id: build-3
         if: ${{ steps.build-2.outcome == 'failure' }}
         env:
@@ -139,6 +139,6 @@ jobs:
       ###########################
       - uses: actions/upload-artifact@v3
         with:
-          name: Build Ubuntu (${{ matrix.unityVersion }})
-          path: build
+          name: Build Ubuntu (${{ matrix.targetPlatform }} ${{ matrix.unityVersion }})
+          path: build/${{ matrix.targetPlatform }}
           retention-days: 14
